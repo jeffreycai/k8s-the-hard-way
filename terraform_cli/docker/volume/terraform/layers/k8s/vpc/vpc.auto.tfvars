@@ -1,5 +1,0 @@
-vpc_cidr = "172.32.0.0/16"
-subnet_k8s_master_a_cidr = "172.32.0.0/24"
-subnet_k8s_master_b_cidr = "172.32.1.0/24"
-subnet_k8s_worker_a_cidr = "172.32.3.0/24"
-subnet_k8s_worker_b_cidr = "172.32.4.0/24"
