@@ -1,0 +1,5 @@
+aws_account_id = "377419142249"
+aws_session_name = "ecs-eni-provisioning"
+assume_role = "OrganizationAccountAccessRole"
+bastion_ami = "ami-08589eca6dcc9b39c"
+bastion_key_name = "cloudops-sandbox-jeff"
