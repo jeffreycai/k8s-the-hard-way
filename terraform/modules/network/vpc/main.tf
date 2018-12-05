@@ -11,7 +11,3 @@ resource "aws_vpc" "vpc-generic" {
         Name = "${var.vpc_tag_name}"
     }
 }
-
-# Output
-output "vpc_cidr" { value = "${aws_vpc.vpc-generic.cidr_block}" }
-output "vpc_id" { value = "${aws_vpc.vpc-generic.id}" }

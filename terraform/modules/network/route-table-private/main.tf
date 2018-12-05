@@ -8,5 +8,3 @@ resource "aws_route_table" "route-table-generic" {
         Name = "route-table-${var.route_table_name}"
     }
 }
-
-output "route_table_id" { value = "${aws_route_table.route-table-generic.id}" }

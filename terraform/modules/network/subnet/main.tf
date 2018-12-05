@@ -13,7 +13,3 @@ resource "aws_subnet" "subnet-generic" {
         Name = "${var.subnet_tag_name}"
     }
 }
-
-# Output
-output subnet_cidr { value = "${aws_subnet.subnet-generic.cidr_block}" }
-output subnet_id { value = "${aws_subnet.subnet-generic.id}" }

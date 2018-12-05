@@ -24,5 +24,3 @@ resource "aws_route" "route-internet-gw" {
     destination_cidr_block = "0.0.0.0/0"
     gateway_id  = "${aws_internet_gateway.internet-gw-generic.id}"
 }
-
-output "route_table_id" { value = "${aws_route_table.route-table-generic.id}" }
