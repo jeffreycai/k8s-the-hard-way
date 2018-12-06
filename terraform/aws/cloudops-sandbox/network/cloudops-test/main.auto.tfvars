@@ -12,3 +12,5 @@ subnet_protected_c_cidr="172.32.246.0/24"
 subnet_private_a_cidr="172.32.248.0/24"
 subnet_private_b_cidr="172.32.249.0/24"
 subnet_private_c_cidr="172.32.250.0/24"
+
+myip="52.62.136.23"
