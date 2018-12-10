@@ -9,9 +9,9 @@ resource "aws_instance" "ks-ctl-1" {
         "${data.aws_security_group.sg-public-layer.id}"
     ]
 
-    tags {
-        Name = "cloudops-sandbox-test-ctl1"
-    }
+#    tags {
+#        Name = "cloudops-sandbox-test-ctl1"
+#    }
 }
 
 resource "aws_instance" "ks-ctl-2" {
@@ -24,9 +24,9 @@ resource "aws_instance" "ks-ctl-2" {
         "${data.aws_security_group.sg-public-layer.id}"
     ]
 
-    tags {
-        Name = "cloudops-sandbox-test-ctl2"
-    }
+#    tags {
+#        Name = "cloudops-sandbox-test-ctl2"
+#    }
 }
 
 

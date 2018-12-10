@@ -9,7 +9,7 @@ resource "aws_instance" "ks-lb-1" {
         "${data.aws_security_group.sg-public-layer.id}"
     ]
 
-    tags {
-        Name = "cloudops-sandbox-test-lb"
-    }
+#    tags {
+#        Name = "cloudops-sandbox-test-lb"
+#    }
 }
