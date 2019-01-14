@@ -1,3 +1,17 @@
+
+## Get the ips and hostnames
+WORKER0_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_dns')
+WORKER0_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_ip')
+WORKER1_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_dns')
+WORKER1_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_ip')
+CTRL0_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.private_dns')
+CTRL0_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.public_ip')
+CTRL1_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.private_dns')
+CTRL1_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.public_ip')
+API_LB_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_dns')
+API_LB_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.public_ip')
+
+
 ## Provision certificate authority
 provision_ca() {
     # ca config file
@@ -76,15 +90,6 @@ EOF
 
 
 ## Provision k8s client certs
-WORKER0_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_dns')
-WORKER0_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.private_ip')
-WORKER1_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_dns')
-WORKER1_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.private_ip')
-
-#echo "$WORKER0_HOST - $WORKER0_IP"
-#echo "$WORKER1_HOST - $WORKER1_IP"
-#exit
-
 provision_k8s_client_certs() {
   # worker #0 csr
   cat > ${WORKER0_HOST}-csr.json << EOF
@@ -238,5 +243,71 @@ EOF
     -config=ca-config.json \
     -profile=kubernetes \
     kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+
+}
+
+
+## Provisioning Kube Scheduler Client Certificate
+provision_k8s_server_cert() {
+  CERT_HOSTNAME=10.32.0.1,$CTRL0_IP,$CTRL0_HOST,$CTRL1_IP,$CTRL1_HOST,$API_LB_IP,$API_LB_HOST,127.0.0.1,localhost,kubernetes.default
+
+  cat > kubernetes-csr.json << EOF
+{
+  "CN": "kubernetes",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "Kubernetes",
+      "OU": "Kubernetes The Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+  cfssl gencert \
+    -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=ca-config.json \
+    -hostname=${CERT_HOSTNAME} \
+    -profile=kubernetes \
+    kubernetes-csr.json | cfssljson -bare kubernetes
+
+}
+
+
+## Provision Kubernetes Service Account Key Pair
+provision_service_account_key_pair() {
+
+  cat > service-account-csr.json << EOF
+{
+  "CN": "service-accounts",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "US",
+      "L": "Portland",
+      "O": "Kubernetes",
+      "OU": "Kubernetes The Hard Way",
+      "ST": "Oregon"
+    }
+  ]
+}
+EOF
+
+  cfssl gencert \
+    -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=ca-config.json \
+    -profile=kubernetes \
+    service-account-csr.json | cfssljson -bare service-account
 
 }

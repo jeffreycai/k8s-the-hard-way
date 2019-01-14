@@ -13,5 +13,6 @@ variable "subnet_private_a_cidr" {}
 variable "subnet_private_b_cidr" {}
 variable "subnet_private_c_cidr" {}
 
-variable "myip" {}
+variable "myip_public" {}
+variable "myip_private" {}
 

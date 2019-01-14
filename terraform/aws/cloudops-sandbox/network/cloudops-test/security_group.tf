@@ -7,7 +7,7 @@ resource "aws_security_group" "sg-public-layer" {
         from_port = 22
         to_port = 22
         protocol = "tcp"
-        cidr_blocks = ["${var.myip}/32"]
+        cidr_blocks = ["${var.myip_public}"]
     }
 
     egress {

@@ -39,14 +39,20 @@ resource "aws_security_group" "sg-ks-wk" {
         from_port = 80
         to_port = 80
         protocol = "tcp"
-        cidr_blocks = ["${var.myip}/32"]
+        cidr_blocks = [
+            "${var.myip_public}",
+            "${var.myip_private}"
+        ]
     }
 
     ingress {
         from_port = 22
         to_port = 22
         protocol = "tcp"
-        cidr_blocks = ["${var.myip}/32"]
+        cidr_blocks = [
+            "${var.myip_public}",
+            "${var.myip_private}"
+        ]
     }
 
     egress {
