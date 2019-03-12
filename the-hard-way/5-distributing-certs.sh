@@ -4,9 +4,8 @@ source functions.sh
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ## provision certificate authority (to get ca-key.pen and ca.pem)
-cd ~/
-mkdir -p kthw
-cd kthw
+mkdir -p $ARTIFACTS_DIR
+cd $ARTIFACTS_DIR
 
 # Move the certificate files to worker nodes
 echo "Move the certificate files to worker nodes ..."

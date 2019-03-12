@@ -11,6 +11,9 @@ CTRL1_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform
 API_LB_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_dns')
 API_LB_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.public_ip')
 
+KUBERNETES_ADDRESS=$API_LB_HOST
+ARTIFACTS_DIR=$(echo ~)/kthw
+
 
 ## Provision certificate authority
 provision_ca() {
@@ -311,3 +314,126 @@ EOF
     service-account-csr.json | cfssljson -bare service-account
 
 }
+
+## Generate a kubelet kubeconfig
+generate_kubeconfig() {
+  instance=$1
+
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=$ARTIFACTS_DIR/ca.pem \
+    --embed-certs=true \
+    --server=https://${KUBERNETES_ADDRESS}:6443 \
+    --kubeconfig=$ARTIFACTS_DIR/${instance}.kubeconfig
+
+  kubectl config set-credentials system:node:${instance} \
+    --client-certificate=$ARTIFACTS_DIR/${instance}.pem \
+    --client-key=$ARTIFACTS_DIR/${instance}-key.pem \
+    --embed-certs=true \
+    --kubeconfig=$ARTIFACTS_DIR/${instance}.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:node:${instance} \
+    --kubeconfig=$ARTIFACTS_DIR/${instance}.kubeconfig
+
+  kubectl config use-context default --kubeconfig=$ARTIFACTS_DIR/${instance}.kubeconfig
+
+  echo $ARTIFACTS_DIR/${instance}.kubeconfig
+}
+
+## Generate kube proxy config
+generate_kube_proxy_config() {
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=$ARTIFACTS_DIR/ca.pem \
+    --embed-certs=true \
+    --server=https://${KUBERNETES_ADDRESS}:6443 \
+    --kubeconfig=$ARTIFACTS_DIR/kube-proxy.kubeconfig
+
+  kubectl config set-credentials system:kube-proxy \
+    --client-certificate=$ARTIFACTS_DIR/kube-proxy.pem \
+    --client-key=$ARTIFACTS_DIR/kube-proxy-key.pem \
+    --embed-certs=true \
+    --kubeconfig=$ARTIFACTS_DIR/kube-proxy.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:kube-proxy \
+    --kubeconfig=$ARTIFACTS_DIR/kube-proxy.kubeconfig
+
+  kubectl config use-context default --kubeconfig=$ARTIFACTS_DIR/kube-proxy.kubeconfig
+
+  echo $ARTIFACTS_DIR/kube-proxy.kubeconfig
+}
+
+## Generate Kube Controller Manager Config
+generate_kube_ctler_manager_config() {
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=$ARTIFACTS_DIR/ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=$ARTIFACTS_DIR/kube-controller-manager.kubeconfig
+
+  kubectl config set-credentials system:kube-controller-manager \
+    --client-certificate=$ARTIFACTS_DIR/kube-controller-manager.pem \
+    --client-key=$ARTIFACTS_DIR/kube-controller-manager-key.pem \
+    --embed-certs=true \
+    --kubeconfig=$ARTIFACTS_DIR/kube-controller-manager.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:kube-controller-manager \
+    --kubeconfig=$ARTIFACTS_DIR/kube-controller-manager.kubeconfig
+
+  kubectl config use-context default --kubeconfig=$ARTIFACTS_DIR/kube-controller-manager.kubeconfig
+
+  echo $ARTIFACTS_DIR/kube-controller-manager.kubeconfig
+}
+
+## Generate Kube Scheduler Config
+generate_kube_scheduler_config() {
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=$ARTIFACTS_DIR/ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=$ARTIFACTS_DIR/kube-scheduler.kubeconfig
+
+  kubectl config set-credentials system:kube-scheduler \
+    --client-certificate=$ARTIFACTS_DIR/kube-scheduler.pem \
+    --client-key=$ARTIFACTS_DIR/kube-scheduler-key.pem \
+    --embed-certs=true \
+    --kubeconfig=$ARTIFACTS_DIR/kube-scheduler.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:kube-scheduler \
+    --kubeconfig=$ARTIFACTS_DIR/kube-scheduler.kubeconfig
+
+  kubectl config use-context default --kubeconfig=$ARTIFACTS_DIR/kube-scheduler.kubeconfig
+
+  echo $ARTIFACTS_DIR/kube-scheduler.kubeconfig
+}
+
+## Generate an admin kubeconfig
+generate_kube_admin_config() {
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=$ARTIFACTS_DIR/ca.pem \
+    --embed-certs=true \
+    --server=https://127.0.0.1:6443 \
+    --kubeconfig=$ARTIFACTS_DIR/admin.kubeconfig
+
+  kubectl config set-credentials admin \
+    --client-certificate=$ARTIFACTS_DIR/admin.pem \
+    --client-key=$ARTIFACTS_DIR/admin-key.pem \
+    --embed-certs=true \
+    --kubeconfig=$ARTIFACTS_DIR/admin.kubeconfig
+
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=admin \
+    --kubeconfig=$ARTIFACTS_DIR/admin.kubeconfig
+
+  kubectl config use-context default --kubeconfig=$ARTIFACTS_DIR/admin.kubeconfig
+
+  echo $ARTIFACTS_DIR/admin.kubeconfig
+}
+
