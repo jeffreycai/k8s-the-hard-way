@@ -9,7 +9,7 @@ mkdir -p $ARTIFACTS_DIR
 cd $ARTIFACTS_DIR
 
 ## provision certificate authority
-echo "Provisioning CA ..."
+header "Provisioning CA ..."
 provision_ca
 # At the end, you'll have the following files under ARTIFACTS_DIR folder:
 # $ARTIFACTS_DIR/
@@ -23,7 +23,7 @@ provision_ca
 ## Now you've provisioned ca of K8s cluster, let's generate clients certs 
 # - `admin`, `kubelet` (one for each worker node)
 # - `kube-controller-manager`, `kube-proxy` and `kube-scheduler`
-echo "Provisioning Admin clent cert .."
+header "Provisioning Admin clent cert .."
 provision_admin_client_certs
 # At the end, you have the following files generated:
 # $ARTIFACTS_DIR/
@@ -32,7 +32,7 @@ provision_admin_client_certs
 # ├── admin-key.pem
 # ├── admin.pem
 
-echo "Provisioning k8s client certs ..."
+header "Provisioning k8s client certs ..."
 provision_k8s_client_certs
 # At the end, you have the following files generated:
 # $ARTIFACTS_DIR/
@@ -45,7 +45,7 @@ provision_k8s_client_certs
 # ├── ec2-3-104-54-208.ap-southeast-2.compute.amazonaws.com-key.pem
 # └── ec2-3-104-54-208.ap-southeast-2.compute.amazonaws.com.pem
 
-echo "Provisioning Controller Manager Client certificate ..."
+header "Provisioning Controller Manager Client certificate ..."
 provision_k8s_ctl_mg_client_cert
 # At the end, you have the following files generated:
 # $ARTIFACTS_DIR/
@@ -54,7 +54,7 @@ provision_k8s_ctl_mg_client_cert
 # ├── kube-controller-manager-key.pem
 # └── kube-controller-manager.pem
 
-echo "Provisioning Kube Proxy Client certificate ..."
+header "Provisioning Kube Proxy Client certificate ..."
 provision_k8s_pxy_client_cert
 # At the end, you have the following files generated:
 # $ARTIFACTS_DIR/
@@ -63,7 +63,7 @@ provision_k8s_pxy_client_cert
 # ├── kube-proxy-key.pem
 # └── kube-proxy.pem
 
-echo "Provisioning Kube Scheduler Client Certificate ..."
+header "Provisioning Kube Scheduler Client Certificate ..."
 provision_k8s_sclr_client_cert
 # At the end, you have the following files generated:
 # $ARTIFACTS_DIR/

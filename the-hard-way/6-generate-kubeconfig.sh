@@ -4,7 +4,7 @@ source functions.sh
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ## Generate a kubelet kubeconfig for each worker node
-for instance in $WORKER0_HOST $WORKER1_HOST; do
+for instance in $WORKER0_HOST_PUBLIC $WORKER1_HOST_PUBLIC; do
   echo "Generate kubeconfig for WORKER_HOST $instance ..."
   echo "--------"
   generate_kubeconfig $instance

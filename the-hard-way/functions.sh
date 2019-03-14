@@ -1,18 +1,37 @@
-
 ## Get the ips and hostnames
-WORKER0_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_dns')
-WORKER0_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_ip')
-WORKER1_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_dns')
-WORKER1_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_ip')
-CTRL0_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.private_dns')
-CTRL0_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.public_ip')
-CTRL1_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.private_dns')
-CTRL1_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.public_ip')
-API_LB_HOST=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_dns')
-API_LB_IP=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.public_ip')
+WORKER0_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_dns')
+WORKER0_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_ip')
+WORKER1_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_dns')
+WORKER1_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_ip')
+CTRL0_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.private_dns')
+CTRL0_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.public_dns')
+CTRL0_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.public_ip')
+CTRL0_IP_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.private_ip')
+CTRL1_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.private_dns')
+CTRL1_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.public_dns')
+CTRL1_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.public_ip')
+CTRL1_IP_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-2"].primary.attributes.private_ip')
+API_LB_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.public_dns')
+API_LB_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.public_ip')
+API_LB_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_dns')
+API_LB_IP_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_ip')
 
-KUBERNETES_ADDRESS=$API_LB_HOST
+
+KUBERNETES_ADDRESS=$API_LB_HOST_PRIVATE
 ARTIFACTS_DIR=$(echo ~)/kthw
+
+
+## Helper functions
+header() {
+  echo "*********************"
+  echo $1
+  echo "*********************"
+}
+
+log() {
+  echo "- $1"
+}
+
 
 
 ## Provision certificate authority
@@ -95,9 +114,9 @@ EOF
 ## Provision k8s client certs
 provision_k8s_client_certs() {
   # worker #0 csr
-  cat > ${WORKER0_HOST}-csr.json << EOF
+  cat > ${WORKER0_HOST_PUBLIC}-csr.json << EOF
 {
-  "CN": "system:node:${WORKER0_HOST}",
+  "CN": "system:node:${WORKER0_HOST_PUBLIC}",
   "key": {
     "algo": "rsa",
     "size": 2048
@@ -119,14 +138,14 @@ EOF
     -ca=ca.pem \
     -ca-key=ca-key.pem \
     -config=ca-config.json \
-    -hostname=${WORKER0_IP},${WORKER0_HOST} \
+    -hostname=${WORKER0_IP_PRIVATE},${WORKER0_HOST_PUBLIC} \
     -profile=kubernetes \
-    ${WORKER0_HOST}-csr.json | cfssljson -bare ${WORKER0_HOST}
+    ${WORKER0_HOST_PUBLIC}-csr.json | cfssljson -bare ${WORKER0_HOST_PUBLIC}
 
   # worker #1 csr
-  cat > ${WORKER1_HOST}-csr.json << EOF
+  cat > ${WORKER1_HOST_PUBLIC}-csr.json << EOF
 {
-  "CN": "system:node:${WORKER1_HOST}",
+  "CN": "system:node:${WORKER1_HOST_PUBLIC}",
   "key": {
     "algo": "rsa",
     "size": 2048
@@ -148,9 +167,9 @@ EOF
     -ca=ca.pem \
     -ca-key=ca-key.pem \
     -config=ca-config.json \
-    -hostname=${WORKER1_IP},${WORKER1_HOST} \
+    -hostname=${WORKER1_IP_PRIVATE},${WORKER1_HOST_PUBLIC} \
     -profile=kubernetes \
-    ${WORKER1_HOST}-csr.json | cfssljson -bare ${WORKER1_HOST}
+    ${WORKER1_HOST_PUBLIC}-csr.json | cfssljson -bare ${WORKER1_HOST_PUBLIC}
 
 }
 
@@ -250,9 +269,9 @@ EOF
 }
 
 
-## Provisioning Kube Scheduler Client Certificate
+## Provisioning Kube Server Certificate
 provision_k8s_server_cert() {
-  CERT_HOSTNAME=10.32.0.1,$CTRL0_IP,$CTRL0_HOST,$CTRL1_IP,$CTRL1_HOST,$API_LB_IP,$API_LB_HOST,127.0.0.1,localhost,kubernetes.default
+  CERT_HOSTNAME=10.32.0.1,$CTRL0_IP_PRIVATE,$CTRL0_HOST_PUBLIC,$CTRL1_IP_PRIVATE,$CTRL1_HOST_PUBLIC,$API_LB_IP_PRIVATE,$API_LB_HOST_PUBLIC,127.0.0.1,localhost,kubernetes.default
 
   cat > kubernetes-csr.json << EOF
 {

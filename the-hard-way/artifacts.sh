@@ -3,19 +3,21 @@
 source functions.sh
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-echo "WORKER0_HOST -------- $WORKER0_HOST"
-echo "WORKER0_IP ---------- $WORKER0_IP"
-echo "WORKER1_HOST -------- $WORKER1_HOST"
-echo "WORKER1_IP ---------- $WORKER1_IP"
-echo "CTRL0_HOST ---------- $CTRL0_HOST"
-echo "CTRL0_IP ------------ $CTRL0_IP"
-echo "CTRL1_HOST ---------- $CTRL1_HOST"
-echo "CTRL1_IP ------------ $CTRL1_IP"
-echo "API_LB_HOST --------- $API_LB_HOST"
-echo "API_LB_IP ----------- $API_LB_IP"
-echo "KUBERNETES_ADDRESS -- $KUBERNETES_ADDRESS"
-echo "ARTIFACTS_DIR ------- $ARTIFACTS_DIR"
-
-
+echo "WORKER0_HOST_PUBLIC ------- $WORKER0_HOST_PUBLIC "
+echo "WORKER0_IP_PUBLIC --------- $WORKER0_IP_PUBLIC "
+echo "WORKER1_HOST_PUBLIC ------- $WORKER1_HOST_PUBLIC "
+echo "WORKER1_IP_PUBLIC --------- $WORKER1_IP_PUBLIC "
+echo "CTRL0_HOST_PRIVATE -------- $CTRL0_HOST_PRIVATE "
+echo "CTRL0_HOST_PUBLIC --------- $CTRL0_HOST_PUBLIC "
+echo "CTRL0_IP_PUBLIC ----------- $CTRL0_IP_PUBLIC "
+echo "CTRL0_IP_PRIVATE ---------- $CTRL0_IP_PRIVATE "
+echo "CTRL1_HOST_PRIVATE -------- $CTRL1_HOST_PRIVATE "
+echo "CTRL1_HOST_PUBLIC --------- $CTRL1_HOST_PUBLIC "
+echo "CTRL1_IP_PUBLIC ----------- $CTRL1_IP_PUBLIC "
+echo "CTRL1_IP_PRIVATE ---------- $CTRL1_IP_PRIVATE "
+echo "API_LB_HOST_PUBLIC -------- $API_LB_HOST_PUBLIC "
+echo "API_LB_IP_PUBLIC ---------- $API_LB_IP_PUBLIC "
+echo "API_LB_HOST_PRIVATE ------- $API_LB_HOST_PRIVATE "
+echo "API_LB_IP_PRIVATE --------- $API_LB_IP_PRIVATE "
 
 
