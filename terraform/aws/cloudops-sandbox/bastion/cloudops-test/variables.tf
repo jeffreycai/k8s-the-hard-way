@@ -7,4 +7,5 @@ variable "bastion_key_name" {}
 variable "myip_public" {}
 variable "myip_private" {}
 variable "vpc_tag_name" {}
+variable "vpc_id" {}
 

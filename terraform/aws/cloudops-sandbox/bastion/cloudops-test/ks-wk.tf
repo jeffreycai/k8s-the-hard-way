@@ -1,4 +1,24 @@
 # worker server
+resource "aws_security_group" "ks-wk-sg" {
+    name        = "ks-wk-sg"
+    description = "K8s wk sg"
+    vpc_id      = "${data.aws_vpc.vpc-cloudops-test.id}"
+  
+    ingress {
+        from_port   = 443
+        to_port     = 443
+        protocol    = "tcp"
+        security_groups = ["${aws_security_group.ks-lb-sg.id}"]
+    }
+
+    ingress {
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        security_groups = ["${aws_security_group.ks-lb-sg.id}"]
+    }
+}
+
 resource "aws_instance" "ks-wk-1" {
     ami = "${var.ks_ami}"
     instance_type = "t2.micro"
@@ -7,7 +27,7 @@ resource "aws_instance" "ks-wk-1" {
     key_name = "${var.bastion_key_name}"
     vpc_security_group_ids  = [
         "${data.aws_security_group.sg-public-layer.id}",
-        "${aws_security_group.sg-ks-wk.id}"
+        "${aws_security_group.ks-wk-sg.id}"
     ]
 
 #    tags {
@@ -23,44 +43,10 @@ resource "aws_instance" "ks-wk-2" {
     key_name = "${var.bastion_key_name}"
     vpc_security_group_ids  = [
         "${data.aws_security_group.sg-public-layer.id}",
-        "${aws_security_group.sg-ks-wk.id}"
+        "${aws_security_group.ks-wk-sg.id}"
     ]
 
 #    tags {
 #        Name = "cloudops-sandbox-test-wk2"
 #    }
 }
-
-resource "aws_security_group" "sg-ks-wk" {
-    name = "cloudops-test-ks-wk"
-    vpc_id = "${data.aws_vpc.vpc-cloudops-test.id}"
-
-    ingress {
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = [
-            "${var.myip_public}",
-            "${var.myip_private}"
-        ]
-    }
-
-    ingress {
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = [
-            "${var.myip_public}",
-            "${var.myip_private}"
-        ]
-    }
-
-    egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-}
-
-
