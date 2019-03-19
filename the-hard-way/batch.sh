@@ -14,3 +14,4 @@ bash 6-generate-kubeconfig.sh
 bash 7-distributing-the-kubeconfig-files.sh
 bash 8-generate-data-encryption-config.sh
 bash 9-bootstrap-etcd.sh
+bash 10-control-plane-binary.sh
