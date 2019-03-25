@@ -25,6 +25,13 @@ resource "aws_security_group" "ks-ctl-sg" {
         security_groups = ["${aws_security_group.ks-lb-sg.id}"]
     }
 
+    ingress {
+        from_port   = 6443
+        to_port     = 6443
+        protocol    = "tcp"
+        security_groups = ["${aws_security_group.ks-lb-sg.id}"]
+    }
+
 }
 
 

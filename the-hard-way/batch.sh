@@ -15,3 +15,10 @@ bash 7-distributing-the-kubeconfig-files.sh
 bash 8-generate-data-encryption-config.sh
 bash 9-bootstrap-etcd.sh
 bash 10-control-plane-binary.sh
+bash 11-control-plane-apiserver.sh
+bash 12-control-plane-controller-manager.sh
+bash 13-control-plane-scheduler.sh
+bash 14-enable-api-ctlmg-schl.sh
+bash 15-k8sapi-http-health-check.sh
+bash 16-setup-rbac.sh
+bash 17-setup-apiserver-frontend-lb.sh
