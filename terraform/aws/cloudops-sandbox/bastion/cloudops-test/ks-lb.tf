@@ -3,7 +3,7 @@ resource "aws_security_group" "ks-lb-sg" {
     name        = "ks-lb-sg"
     description = "K8s lb sg"
     vpc_id      = "${data.aws_vpc.vpc-cloudops-test.id}"
-  
+
     ingress {
         from_port   = 443
         to_port     = 443
@@ -35,7 +35,7 @@ resource "aws_instance" "ks-lb-1" {
         "${aws_security_group.ks-lb-sg.id}"
     ]
 
-#    tags {
-#        Name = "cloudops-sandbox-test-lb"
-#    }
+    tags {
+        Name = "cloudops-sandbox-test-lb"
+    }
 }

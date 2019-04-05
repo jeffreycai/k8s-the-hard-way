@@ -47,7 +47,7 @@ sudo tar -xvf containerd-1.1.0.linux-amd64.tar.gz -C /
 
 # verify
 kubectl version
-kube-proxy version
+kube-proxy --version
 kubelet --version
 runc --version
 runsc state

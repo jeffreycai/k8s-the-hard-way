@@ -3,10 +3,18 @@ resource "aws_security_group" "ks-wk-sg" {
     name        = "ks-wk-sg"
     description = "K8s wk sg"
     vpc_id      = "${data.aws_vpc.vpc-cloudops-test.id}"
+
   
     ingress {
         from_port   = 443
         to_port     = 443
+        protocol    = "tcp"
+        security_groups = ["${aws_security_group.ks-lb-sg.id}"]
+    }
+
+    ingress {
+        from_port   = 6443
+        to_port     = 6443
         protocol    = "tcp"
         security_groups = ["${aws_security_group.ks-lb-sg.id}"]
     }
@@ -30,9 +38,9 @@ resource "aws_instance" "ks-wk-1" {
         "${aws_security_group.ks-wk-sg.id}"
     ]
 
-#    tags {
-#        Name = "cloudops-sandbox-test-wk1"
-#    }
+    tags {
+        Name = "cloudops-sandbox-test-wk1"
+    }
 }
 
 resource "aws_instance" "ks-wk-2" {
@@ -46,7 +54,7 @@ resource "aws_instance" "ks-wk-2" {
         "${aws_security_group.ks-wk-sg.id}"
     ]
 
-#    tags {
-#        Name = "cloudops-sandbox-test-wk2"
-#    }
+    tags {
+        Name = "cloudops-sandbox-test-wk2"
+    }
 }

@@ -22,3 +22,8 @@ bash 14-enable-api-ctlmg-schl.sh
 bash 15-k8sapi-http-health-check.sh
 bash 16-setup-rbac.sh
 bash 17-setup-apiserver-frontend-lb.sh
+bash 18-installing-wkr-node-binaries.sh
+bash 19-configuring-containerd.sh
+bash 20-configuring-kubelet.sh
+bash 21-configuring-kube-proxy.sh
+bash 22-start-worker-services.sh

@@ -3,6 +3,7 @@ resource "aws_security_group" "ks-ctl-sg" {
     name        = "ks-ctl-sg"
     description = "K8s ctl sg"
     vpc_id      = "${data.aws_vpc.vpc-cloudops-test.id}"
+
   
     ingress {
         from_port   = 2379
@@ -46,9 +47,9 @@ resource "aws_instance" "ks-ctl-1" {
         "${aws_security_group.ks-ctl-sg.id}"
     ]
 
-#    tags {
-#        Name = "cloudops-sandbox-test-ctl1"
-#    }
+    tags {
+        Name = "cloudops-sandbox-test-ctl1"
+    }
 }
 
 resource "aws_instance" "ks-ctl-2" {
@@ -62,9 +63,9 @@ resource "aws_instance" "ks-ctl-2" {
         "${aws_security_group.ks-ctl-sg.id}"
     ]
 
-#    tags {
-#        Name = "cloudops-sandbox-test-ctl2"
-#    }
+    tags {
+        Name = "cloudops-sandbox-test-ctl2"
+    }
 }
 
 
