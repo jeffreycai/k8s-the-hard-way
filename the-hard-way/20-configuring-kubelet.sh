@@ -47,16 +47,16 @@ After=containerd.service
 Requires=containerd.service
 
 [Service]
-ExecStart=/usr/local/bin/kubelet \\
-  --config=/var/lib/kubelet/kubelet-config.yaml \\
-  --container-runtime=remote \\
-  --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \\
-  --image-pull-progress-deadline=2m \\
-  --kubeconfig=/var/lib/kubelet/kubeconfig \\
-  --network-plugin=cni \\
-  --register-node=true \\
-  --v=2 \\
-  --hostname-override=\${HOSTNAME} \\
+ExecStart=/usr/local/bin/kubelet \\\\
+  --config=/var/lib/kubelet/kubelet-config.yaml \\\\
+  --container-runtime=remote \\\\
+  --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \\\\
+  --image-pull-progress-deadline=2m \\\\
+  --kubeconfig=/var/lib/kubelet/kubeconfig \\\\
+  --network-plugin=cni \\\\
+  --register-node=true \\\\
+  --v=2 \\\\
+  --hostname-override=\${HOSTNAME} \\\\
   --allow-privileged=true
 Restart=on-failure
 RestartSec=5

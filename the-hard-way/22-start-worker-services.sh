@@ -19,10 +19,21 @@ sudo systemctl start containerd kubelet kube-proxy
 # Check status
 sudo systemctl status containerd kubelet kube-proxy
 
-# Check k8s nodes
-kubectl get nodes
-
 eof
 
   ssh ubuntu@$instance 'bash -s' < $script
 done
+
+# jump on a control node and check if the worker nodes are registered. (they should be NotReady for now)
+for instance in $CTRL0_IP_PUBLIC; do
+  log "Check worker nodes registered on Control node $instance .."
+
+  script=${ARTIFACTS_DIR}/${instance}-ctrl-get-nodes.sh
+
+  cat > $script << eof
+kubectl get nodes
+eof
+
+  ssh ubuntu@$instance 'bash -s' < $script
+done
+
