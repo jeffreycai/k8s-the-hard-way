@@ -27,3 +27,4 @@ bash 19-configuring-containerd.sh
 bash 20-configuring-kubelet.sh
 bash 21-configuring-kube-proxy.sh
 bash 22-start-worker-services.sh
+bash 23-local-kubectl-setup.sh
