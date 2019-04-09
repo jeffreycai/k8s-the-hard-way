@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## Enable services
 header "Enabling Kubernetes services, kube-apiserver, kube-controller-manager, kube-scheduler ..."
 
-for instance in $CTRL0_IP_PUBLIC $CTRL1_IP_PUBLIC; do
+for instance in $CTRL0_HOST_PUBLIC $CTRL1_HOST_PUBLIC; do
   log "Enabling kubernetes services, kube-apiserver, kube-controller-manager, kube-scheduler for instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-enable-services.sh

@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## Install etcd on Controller nodes
 header "Install etcd on Controller nodes ..."
 
-for instance in $CTRL0_IP_PUBLIC $CTRL1_IP_PUBLIC; do
+for instance in $CTRL0_HOST_PUBLIC $CTRL1_HOST_PUBLIC; do
   log "Make ectd installation scripts locally for $instance"
 
   script=${ARTIFACTS_DIR}/${instance}-ectd.sh
@@ -22,9 +22,10 @@ sudo mkdir -p /etc/etcd /var/lib/etcd
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 
 # set env vars
-ETCD_NAME=\${HOSTNAME}.ap-southeast-2.compute.internal
+#ETCD_NAME=\${HOSTNAME}.ap-southeast-2.compute.internal
+ETCD_NAME=${instance}
 INTERNAL_IP=\$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
-INITIAL_CLUSTER=${CTRL0_HOST_PRIVATE}=https://${CTRL0_IP_PRIVATE}:2380,${CTRL1_HOST_PRIVATE}=https://${CTRL1_IP_PRIVATE}:2380
+INITIAL_CLUSTER=${CTRL0_HOST_PUBLIC}=https://${CTRL0_IP_PRIVATE}:2380,${CTRL1_HOST_PUBLIC}=https://${CTRL1_IP_PRIVATE}:2380
 
 # Create the systemd unit file for etcd 
 cat << EOF | sudo tee /etc/systemd/system/etcd.service
@@ -63,15 +64,15 @@ sudo systemctl daemon-reload
 sudo systemctl enable etcd
 sudo systemctl start etcd
 
-# verify etcd service is up and running
-sudo systemctl status etcd
-
-# verify etcd service is working correctly
-sudo ETCDCTL_API=3 etcdctl member list \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/etcd/ca.pem \
-  --cert=/etc/etcd/kubernetes.pem \
-  --key=/etc/etcd/kubernetes-key.pem
+## verify etcd service is up and running
+#sudo systemctl status etcd
+#
+## verify etcd service is working correctly
+#sudo ETCDCTL_API=3 etcdctl member list \
+#  --endpoints=https://127.0.0.1:2379 \
+#  --cacert=/etc/etcd/ca.pem \
+#  --cert=/etc/etcd/kubernetes.pem \
+#  --key=/etc/etcd/kubernetes-key.pem
 
 sleep 2
 eof
@@ -83,7 +84,7 @@ done
 header "Verifying all etcd running properly on controller nodes .."
 sleep 2
 
-for instance in $CTRL0_IP_PUBLIC $CTRL1_IP_PUBLIC; do
+for instance in $CTRL0_HOST_PUBLIC $CTRL1_HOST_PUBLIC; do
   log "Verifying instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-ectd-verify.sh

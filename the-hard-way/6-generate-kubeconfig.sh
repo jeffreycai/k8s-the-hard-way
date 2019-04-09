@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Kubeconfigs can be generated using `kubectl`
+## Use `kubectl config set-cluster` to set up the configuration for the location of the cluster
+## Use `kubectl config set-credentials` to set the username and client certificate that will be used to authenticate
+## Use `kubectl config set-context default` to set up the default context
+## Use `kubectl config use-context default` to set the current context to the configuration we provided
+
+# We will need several Kubeconfig files for various components of the Kubernetes cluster:
+## Kubelet
+## Kube-proxy
+## Kube-controller-manager
+## Kube-scheduler
+## Admin
+
 source functions.sh
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## RBAC setup
 header "Setting nginx load balancing on Load balancer instance ..."
 
-for instance in $API_LB_IP_PUBLIC; do
+for instance in $API_LB_HOST_PUBLIC; do
   log "Setting up nginx load balancer on instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-apiserver-lb.sh

@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## Enable services
 header "Installing nginx and setup /healthz health check point ..."
 
-for instance in $CTRL0_IP_PUBLIC $CTRL1_IP_PUBLIC; do
+for instance in $CTRL0_HOST_PUBLIC $CTRL1_HOST_PUBLIC; do
   log "Installing nginx and config health check for instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-apiserver-healthcheck.sh

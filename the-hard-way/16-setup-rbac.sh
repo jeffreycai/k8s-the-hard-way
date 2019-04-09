@@ -8,7 +8,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # we only need to run once on one node
 header "Setting up RBAC ..."
 
-for instance in $CTRL0_IP_PUBLIC; do
+for instance in $CTRL0_HOST_PUBLIC; do
   log "Setting up RBAC on instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-rbac.sh

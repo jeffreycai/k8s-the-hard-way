@@ -1,8 +1,12 @@
 ## Get the ips and hostnames
 WORKER0_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_dns')
+WORKER0_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.private_dns')
 WORKER0_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.public_ip')
+WORKER0_IP_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-1"].primary.attributes.private_ip')
 WORKER1_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_dns')
+WORKER1_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.private_dns')
 WORKER1_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.public_ip')
+WORKER1_IP_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-wk-2"].primary.attributes.private_ip')
 CTRL0_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.private_dns')
 CTRL0_HOST_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.public_dns')
 CTRL0_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-ctl-1"].primary.attributes.public_ip')
@@ -16,8 +20,33 @@ API_LB_IP_PUBLIC=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/t
 API_LB_HOST_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_dns')
 API_LB_IP_PRIVATE=$(cat ../terraform/aws/cloudops-sandbox/bastion/cloudops-test/terraform.tfstate | jq -r '.modules[0].resources["aws_instance.ks-lb-1"].primary.attributes.private_ip')
 
+## prepare HOSTNAME vars
+IFS_BAK=$IFS
+IFS="."
+for word in $WORKER0_HOST_PRIVATE; do
+  WORKER0_HOSTNAME=$word
+  break
+done
+for word in $WORKER1_HOST_PRIVATE; do
+  WORKER1_HOSTNAME=$word
+  break
+done
+for word in $CTRL0_HOST_PRIVATE; do
+  CTRL0_HOSTNAME=$word
+  break
+done
+for word in $CTRL1_HOST_PRIVATE; do
+  CTRL1_HOSTNAME=$word
+  break
+done
+for word in $API_LB_HOST_PRIVATE; do
+  API_LB_HOSTNAME=$word
+  break
+done
+IFS=$IFS_BAK
 
-KUBERNETES_ADDRESS=$API_LB_HOST_PRIVATE
+
+KUBERNETES_ADDRESS=$API_LB_IP_PRIVATE
 ARTIFACTS_DIR=$(echo ~)/kthw
 
 
@@ -456,3 +485,8 @@ generate_kube_admin_config() {
   echo $ARTIFACTS_DIR/admin.kubeconfig
 }
 
+# convert a aws ec2 hostname, e.g. "ip-192-168-0-100" to ip, i.e. 192.168.0.100
+hostname_to_ip() {
+  hostname=$1
+  echo $hostname | sed 's/ip-//' | sed 's/-/./g'
+}

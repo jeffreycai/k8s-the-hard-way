@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## RBAC setup
 header "Install binaries on worker instances ..."
 
-for instance in $WORKER0_IP_PUBLIC $WORKER1_IP_PUBLIC; do
+for instance in $WORKER0_HOST_PUBLIC $WORKER1_HOST_PUBLIC; do
   log "Install binaries on worker instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-worker-install-binaries.sh
@@ -50,7 +50,7 @@ kubectl version
 kube-proxy --version
 kubelet --version
 runc --version
-runsc state
+runsc help
 crictl --version
 sudo containerd --version
 eof

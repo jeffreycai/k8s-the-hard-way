@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## Setting up k8s api server
 header "Setting up the Kubernetes API Server ..."
 
-for instance in $CTRL0_IP_PUBLIC $CTRL1_IP_PUBLIC; do
+for instance in $CTRL0_HOST_PUBLIC $CTRL1_HOST_PUBLIC; do
   log "Setting up k8s api server for instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-ctl-apiserver.sh

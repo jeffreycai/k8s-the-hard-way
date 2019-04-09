@@ -6,7 +6,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ## RBAC setup
 header "Configuring kubelet on worker nodes ..."
 
-for instance in $WORKER0_IP_PUBLIC $WORKER1_IP_PUBLIC; do
+for instance in $WORKER0_HOST_PUBLIC $WORKER1_HOST_PUBLIC; do
   log "Configuring kubelet on worker instance $instance .."
 
   script=${ARTIFACTS_DIR}/${instance}-worker-config-kubelet.sh
