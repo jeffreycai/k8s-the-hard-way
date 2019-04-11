@@ -22,10 +22,48 @@ function install_java_8() {
 # Install Tomcat
 function install_tomcat_9() {
   echo "-- Install Tomcat 9 --"
-  sudo yum install -y wget
-  wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.tar.gz
-  tar xzf apache-tomcat-9.0.0.M10.tar.gz
-  mv apache-tomcat-9.0.0.M10 tomcat9
+  # Add tomcat system user
+  sudo useradd -m -U -d /opt/tomcat -s /bin/false tomcat
+
+  # Download
+  cd /tmp
+  wget http://www.strategylions.com.au/mirror/tomcat/tomcat-9/v9.0.17/bin/apache-tomcat-9.0.17.tar.gz
+  tar -xf apache-tomcat-9.0.17.tar.gz
+  sudo mv apache-tomcat-9.0.17 /opt/tomcat/
+  sudo ln -s /opt/tomcat/apache-tomcat-9.0.17 /opt/tomcat/latest
+  sudo chown -R tomcat: /opt/tomcat
+  sudo sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
+
+  # Create systemd unit file
+  cat << EOF | sudo tee /etc/systemd/system/tomcat.service
+[Unit]
+Description=Tomcat 9 servlet container
+After=network.target
+
+[Service]
+Type=forking
+
+User=tomcat
+Group=tomcat
+
+Environment="JAVA_HOME=/usr/lib/jvm/jre"
+Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom"
+
+Environment="CATALINA_BASE=/opt/tomcat/latest"
+Environment="CATALINA_HOME=/opt/tomcat/latest"
+Environment="CATALINA_PID=/opt/tomcat/latest/temp/tomcat.pid"
+Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+
+ExecStart=/opt/tomcat/latest/bin/startup.sh
+ExecStop=/opt/tomcat/latest/bin/shutdown.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  sudo systemctl daemon-reload
+  sudo systemctl enable tomcat
+  sudo systemctl start tomcat
 }
 
 # Update Tomcat user config
@@ -67,31 +105,30 @@ EOF
 <Context antiResourceLocking="false" privileged="true" >
   <!-- <Valve className="org.apache.catalina.valves.RemoteAddrValve"
          allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> -->
+  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
 </Context>
 EOF
 
+  sudo systemctl restart tomcat
 }
 
-# Start Tomcat
-function start_tomcat() {
-  cd tomcat9
-  ./bin/startup.sh 
-}
-
-# Download and Deploy Jenkins War
-function download_and_deploy_jenkins_war() {
-  cd
-  wget http://updates.jenkins-ci.org/download/war/2.171/jenkins.war
-  mv jenkins.war /home/ec2-user/tomcat9/webapps
-  ./tomcat9/bin/shutdown.sh
-  ./tomcat9/bin/startup.sh
+# Install Jenkins
+function install_jenkins() {
+  sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+  sudo yum install -y jenkins
+  sudo systemctl enable jenkins
+  sudo systemctl start jenkins
 }
 
 install_java_8
-install_tomcat_9
-update_tomcat
-start_tomcat
-download_and_deploy_jenkins_war
+#install_tomcat_9
+#update_tomcat
+install_jenkins
+# then go to http://<ip>:8080/, unlock Jenkins by copying the password at /var/lib/jenkins/secrets/initialAdminPassword
+# then install plugins
+# Suggested plugins:
+# Folders OWASP Markup Formatter Build Timeout Credentials Binding Timestamper Workspace Cleanup Ant Gradle Pipeline GitHub Branch Source Pipeline: GitHub Groovy Libraries Pipeline: Stage View Git Subversion SSH Slaves Matrix Authorization Strategy PAM Authentication LDAP Email Extension Mailer
 eof
 
   ssh ec2-user@$instance 'bash -s' < $script
