@@ -9,7 +9,7 @@ header "Starting services on worker nodes ..."
 for instance in $WORKER0_HOST_PUBLIC $WORKER1_HOST_PUBLIC; do
   log "Starting services on worker instance $instance .."
 
-  script=${ARTIFACTS_DIR}/${instance}-worker-config-kube-proxy.sh
+  script=${ARTIFACTS_DIR}/${instance}-worker-start-services.sh
 
   cat > $script << eof
 sudo systemctl daemon-reload

@@ -1,0 +1,128 @@
+Name:           weave-net-6jm94
+Namespace:      kube-system
+Node:           ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com/192.168.0.117
+Start Time:     Wed, 17 Apr 2019 15:34:44 +1000
+Labels:         controller-revision-hash=1901345230
+                name=weave-net
+                pod-template-generation=1
+Annotations:    <none>
+Status:         Running
+IP:             192.168.0.117
+Controlled By:  DaemonSet/weave-net
+Containers:
+  weave:
+    Container ID:  containerd://93f42785f6414a33252fb37610676448a7f45ea5bd91245e1016ff6b9123e6f2
+    Image:         docker.io/weaveworks/weave-kube:2.5.1
+    Image ID:      docker.io/weaveworks/weave-kube@sha256:103e37b504631f7c762ef6baa79b3e7d2d2cf718accbf659e7cae933b6ca937c
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      /home/weave/launch.sh
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    1
+      Started:      Wed, 17 Apr 2019 15:40:31 +1000
+      Finished:     Wed, 17 Apr 2019 15:41:01 +1000
+    Ready:          False
+    Restart Count:  5
+    Requests:
+      cpu:      10m
+    Readiness:  http-get http://127.0.0.1:6784/status delay=0s timeout=1s period=10s #success=1 #failure=3
+    Environment:
+      HOSTNAME:        (v1:spec.nodeName)
+      IPALLOC_RANGE:  10.200.0.0/16
+    Mounts:
+      /host/etc from cni-conf (rw)
+      /host/home from cni-bin2 (rw)
+      /host/opt from cni-bin (rw)
+      /host/var/lib/dbus from dbus (rw)
+      /lib/modules from lib-modules (rw)
+      /run/xtables.lock from xtables-lock (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from weave-net-token-kxv8f (ro)
+      /weavedb from weavedb (rw)
+  weave-npc:
+    Container ID:   containerd://46791face56b7a0d9d8ee150972963d7eed54ac1066a1c9efba855f9c9db6795
+    Image:          docker.io/weaveworks/weave-npc:2.5.1
+    Image ID:       docker.io/weaveworks/weave-npc@sha256:e51029aa3abcada82c59b5e5161b71dc14c04ca664b53bb1cdd2ebbf850bf258
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Wed, 17 Apr 2019 15:35:04 +1000
+    Ready:          True
+    Restart Count:  0
+    Requests:
+      cpu:  10m
+    Environment:
+      HOSTNAME:   (v1:spec.nodeName)
+    Mounts:
+      /run/xtables.lock from xtables-lock (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from weave-net-token-kxv8f (ro)
+Conditions:
+  Type           Status
+  Initialized    True 
+  Ready          False 
+  PodScheduled   True 
+Volumes:
+  weavedb:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/lib/weave
+    HostPathType:  
+  cni-bin:
+    Type:          HostPath (bare host directory volume)
+    Path:          /opt
+    HostPathType:  
+  cni-bin2:
+    Type:          HostPath (bare host directory volume)
+    Path:          /home
+    HostPathType:  
+  cni-conf:
+    Type:          HostPath (bare host directory volume)
+    Path:          /etc
+    HostPathType:  
+  dbus:
+    Type:          HostPath (bare host directory volume)
+    Path:          /var/lib/dbus
+    HostPathType:  
+  lib-modules:
+    Type:          HostPath (bare host directory volume)
+    Path:          /lib/modules
+    HostPathType:  
+  xtables-lock:
+    Type:          HostPath (bare host directory volume)
+    Path:          /run/xtables.lock
+    HostPathType:  FileOrCreate
+  weave-net-token-kxv8f:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  weave-net-token-kxv8f
+    Optional:    false
+QoS Class:       Burstable
+Node-Selectors:  <none>
+Tolerations:     :NoSchedule
+                 node.kubernetes.io/disk-pressure:NoSchedule
+                 node.kubernetes.io/memory-pressure:NoSchedule
+                 node.kubernetes.io/not-ready:NoExecute
+                 node.kubernetes.io/unreachable:NoExecute
+Events:
+  Type     Reason                 Age               From                                                              Message
+  ----     ------                 ----              ----                                                              -------
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "xtables-lock"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "cni-bin"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "cni-bin2"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "cni-conf"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "dbus"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "lib-modules"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "weave-net-token-kxv8f"
+  Normal   SuccessfulMountVolume  7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  MountVolume.SetUp succeeded for volume "weavedb"
+  Normal   Pulling                7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  pulling image "docker.io/weaveworks/weave-kube:2.5.1"
+  Normal   Pulling                7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  pulling image "docker.io/weaveworks/weave-npc:2.5.1"
+  Normal   Pulled                 7m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Successfully pulled image "docker.io/weaveworks/weave-kube:2.5.1"
+  Normal   Pulled                 6m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Successfully pulled image "docker.io/weaveworks/weave-npc:2.5.1"
+  Normal   Created                6m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Created container
+  Normal   Started                6m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Started container
+  Normal   Pulled                 6m                kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Container image "docker.io/weaveworks/weave-kube:2.5.1" already present on machine
+  Normal   Created                6m (x2 over 7m)   kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Created container
+  Normal   Started                6m (x2 over 7m)   kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Started container
+  Warning  Unhealthy              6m (x5 over 6m)   kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Readiness probe failed: Get http://127.0.0.1:6784/status: dial tcp 127.0.0.1:6784: getsockopt: connection refused
+  Warning  BackOff                2m (x11 over 5m)  kubelet, ec2-54-252-250-161.ap-southeast-2.compute.amazonaws.com  Back-off restarting failed container

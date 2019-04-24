@@ -5,6 +5,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ## provision certificate authority (to get ca-key.pen and ca.pem)
 cd ~/
+rm -rf $ARTIFACTS_DIR
 mkdir -p $ARTIFACTS_DIR
 cd $ARTIFACTS_DIR
 

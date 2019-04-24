@@ -14,6 +14,8 @@ for instance in $WORKER0_HOST_PUBLIC $WORKER1_HOST_PUBLIC; do
   cat > $script << eof
 sudo mv kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
 
+HOSTNAME=\$(curl http://169.254.169.254/latest/meta-data/public-hostname)
+
 # Create the kube-proxy config file
 cat << EOF | sudo tee /var/lib/kube-proxy/kube-proxy-config.yaml
 kind: KubeProxyConfiguration
@@ -32,6 +34,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 
 [Service]
 ExecStart=/usr/local/bin/kube-proxy \\\\
+  --hostname-override \${HOSTNAME} \\\\
   --config=/var/lib/kube-proxy/kube-proxy-config.yaml
 Restart=on-failure
 RestartSec=5
